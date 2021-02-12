@@ -1,8 +1,8 @@
 import unittest
 
 import numpy as np
-from base import Variable
-from functions import Square, Exp
+from src.base import Variable
+from src.functions import Square, Exp
 
 def square(x):
     return Square()(x)
