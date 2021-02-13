@@ -2,7 +2,7 @@ import unittest
 
 import numpy as np
 from dezero import Variable
-
+from dezero.utils import get_dot_graph
 
 class Optimization(unittest.TestCase):
     def test_sphere(self):
@@ -40,6 +40,8 @@ class Optimization(unittest.TestCase):
         y = Variable(np.array(1.0))
         z = goldstein(x,y)
         z.backward()
+
+        
         expected0 = np.array(-5376.0)
         expected1 = np.array(8064.0)
         self.assertEqual(x.grad, expected0)
