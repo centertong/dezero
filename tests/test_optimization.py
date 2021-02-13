@@ -14,9 +14,13 @@ class Optimization(unittest.TestCase):
         z = sphere(x,y)
         z.backward()
         expected = np.array(2.0)
-        self.assertEqual(x.grad, expected)
-        self.assertEqual(y.grad, expected)
-    
+        if isinstance(x.grad, Variable):
+            self.assertEqual(x.grad.data, expected)
+            self.assertEqual(y.grad.data, expected)
+        else:
+            self.assertEqual(x.grad, expected)
+            self.assertEqual(y.grad, expected)
+        
     def test_matyas(self):
         def matyas(x,y):
             z = 0.26 * (x ** 2 + y ** 2) - 0.48 * x * y
@@ -27,9 +31,14 @@ class Optimization(unittest.TestCase):
         z = matyas(x,y)
         z.backward()
         expected = np.array(0.040000000000000036)
-        self.assertEqual(x.grad, expected)
-        self.assertEqual(y.grad, expected)
-    
+        if isinstance(x.grad, Variable):
+            self.assertEqual(x.grad.data, expected)
+            self.assertEqual(y.grad.data, expected)
+        else:
+            self.assertEqual(x.grad, expected)
+            self.assertEqual(y.grad, expected)
+        
+        
     def test_goldstein(self):
         def goldstein(x,y):
             z = (1 + (x + y + 1) ** 2 * (19 - 14*x + 3*x**2 - 14*y + 6*x*y + 3*y**2)) * \
@@ -44,8 +53,13 @@ class Optimization(unittest.TestCase):
         
         expected0 = np.array(-5376.0)
         expected1 = np.array(8064.0)
-        self.assertEqual(x.grad, expected0)
-        self.assertEqual(y.grad, expected1)
+        if isinstance(x.grad, Variable):
+            self.assertEqual(x.grad.data, expected0)
+            self.assertEqual(y.grad.data, expected1)
+        else:
+            self.assertEqual(x.grad, expected0)
+            self.assertEqual(y.grad, expected1)
+        
     
     def test_rosenbrock(self):
         def rosenbrock(x0, x1, a = 1, b=100):

@@ -19,20 +19,28 @@ class SquareTest(unittest.TestCase):
         y = square(x)
         expected = np.array(4.0)
         self.assertEqual(y.data, expected)
+        
 
     def test_backward(self):
         x = Variable(np.array(3.0))
         y = square(x)
         y.backward()
         expected = np.array(6.0)
-        self.assertEqual(x.grad, expected)
+        if isinstance(x.grad, Variable):
+            self.assertEqual(x.grad.data, expected)
+        else:
+            self.assertEqual(x.grad, expected)
+        
 
     def test_gradient_check(self):
         x = Variable(np.random.rand(1))
         y = square(x)
         y.backward()
         num_grad = numerical_diff(square, x)
-        flg = np.allclose(x.grad, num_grad)
+        if isinstance(x.grad, Variable):
+            flg = np.allclose(x.grad.data, num_grad)
+        else:
+            flg = np.allclose(x.grad, num_grad)
         self.assertTrue(flg)
 
     def test_taylor(self):
@@ -49,7 +57,10 @@ class SquareTest(unittest.TestCase):
         x = Variable(np.array(np.pi / 4))
         y = my_sin(x)
         y.backward()
-        flg = np.allclose(y.data, x.grad)
+        if isinstance(x.grad, Variable):
+            flg = np.allclose(y.data, x.grad.data)
+        else:
+            flg = np.allclose(y.data, x.grad)
         self.assertTrue(flg)
 
 
