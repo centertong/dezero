@@ -1,14 +1,8 @@
 import unittest
 
 import numpy as np
-from src.base import Variable
-from src.functions import Square, Exp
+from src.base import Variable, mul, add, square, exp
 
-def square(x):
-    return Square()(x)
-
-def exp(x):
-    return Exp()(x)
 
 def numerical_diff(f, x, eps=1e-4):
     x0 = Variable(x.data - eps)
@@ -16,12 +10,6 @@ def numerical_diff(f, x, eps=1e-4):
     y0 = f(x0)
     y1 = f(x1)
     return (y1.data - y0.data) / (2 * eps)
-
-def f(x):
-    A = Square()
-    B = Exp()
-    C = Square()
-    return C(B(A(x)))
 
 
 class SquareTest(unittest.TestCase):
@@ -48,3 +36,7 @@ class SquareTest(unittest.TestCase):
 
 #unittest.main()
 
+
+x = Variable(np.array(2.0))
+y = 3.0 + x
+print(y)
