@@ -69,6 +69,8 @@ class Variable:
                     if x.grad is None:
                         x.grad = gx
                     else:
+                        print('gx', gx)
+                        print('x.grad', x.grad)
                         x.grad = x.grad + gx
 
                     if x.creator is not None:

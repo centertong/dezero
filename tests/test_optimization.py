@@ -63,12 +63,12 @@ class Optimization(unittest.TestCase):
     
     def test_rosenbrock(self):
         def rosenbrock(x0, x1, a = 1, b=100):
-            y  = b * (x1 - x0 ** 2) ** 2 + (a - x0) ** 2
+            y = b * (x1 - x0 ** 2) ** 2 + (a - x0) ** 2
             return y
         
         x0 = Variable(np.array(0.0))
         x1 = Variable(np.array(2.0))
-
+    
         lr = 0.001
         iters = 50000
         for i in range(iters):
@@ -78,9 +78,13 @@ class Optimization(unittest.TestCase):
             x1.cleargrad()
             y.backward()
             
-            x0.data -= lr * x0.grad
-            x1.data -= lr * x1.grad
-        
+            if isinstance(x0.grad, Variable):
+                x0.data -= lr * x0.grad.data
+                x1.data -= lr * x1.grad.data
+            else:
+                x0.data -= lr * x0.grad
+                x1.data -= lr * x1.grad
+            
         flg1 = np.allclose(x0.data, 1.0)
         flg2 = np.allclose(x1.data, 1.0)
         self.assertTrue(flg1 and flg2)
@@ -97,10 +101,12 @@ class Optimization(unittest.TestCase):
         iters = 10
 
         for i in range(iters):
-            print(i, x)
             y = f(x)
             x.cleargrad()
             y.backward()
-
-            x.data -= x.grad / gx2(x.data)
+            
+            if isinstance(x.grad, Variable):
+                x.data -= x.grad.data / gx2(x.data)
+            else:
+                x.data -= x.grad / gx2(x.data)
 

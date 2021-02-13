@@ -16,6 +16,7 @@ class SecondOrder(unittest.TestCase):
         print(x.grad)
 
         gx = x.grad
+        x.cleargrad()
         gx.backward()
         print(x.grad)
         print('second')
