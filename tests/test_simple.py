@@ -1,7 +1,8 @@
 import unittest
 
 import numpy as np
-from src.base import Variable, mul, add, square, exp
+from dezero import Variable
+from dezero.core import mul, add, square, exp, neg
 
 
 def numerical_diff(f, x, eps=1e-4):
@@ -35,8 +36,3 @@ class SquareTest(unittest.TestCase):
         self.assertTrue(flg)
 
 #unittest.main()
-
-
-x = Variable(np.array(2.0))
-y = 3.0 + x
-print(y)
