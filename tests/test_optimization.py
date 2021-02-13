@@ -46,3 +46,47 @@ class Optimization(unittest.TestCase):
         expected1 = np.array(8064.0)
         self.assertEqual(x.grad, expected0)
         self.assertEqual(y.grad, expected1)
+    
+    def test_rosenbrock(self):
+        def rosenbrock(x0, x1, a = 1, b=100):
+            y  = b * (x1 - x0 ** 2) ** 2 + (a - x0) ** 2
+            return y
+        
+        x0 = Variable(np.array(0.0))
+        x1 = Variable(np.array(2.0))
+
+        lr = 0.001
+        iters = 50000
+        for i in range(iters):
+            y = rosenbrock(x0, x1)
+            
+            x0.cleargrad()
+            x1.cleargrad()
+            y.backward()
+            
+            x0.data -= lr * x0.grad
+            x1.data -= lr * x1.grad
+        
+        flg1 = np.allclose(x0.data, 1.0)
+        flg2 = np.allclose(x1.data, 1.0)
+        self.assertTrue(flg1 and flg2)
+
+    def test_newton_gd(self):
+        def f(x):
+            y = x ** 4 - 2 * x ** 2
+            return y
+
+        def gx2(x):
+            return 12 * x ** 2 - 4
+        
+        x = Variable(np.array(2.0))
+        iters = 10
+
+        for i in range(iters):
+            print(i, x)
+            y = f(x)
+            x.cleargrad()
+            y.backward()
+
+            x.data -= x.grad / gx2(x.data)
+

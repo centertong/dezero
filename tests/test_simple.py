@@ -2,8 +2,8 @@ import unittest
 
 import numpy as np
 from dezero import Variable
-from dezero.core import mul, add, square, exp, neg
-
+from dezero.core import mul, add, square, exp, neg, sin
+import math
 
 def numerical_diff(f, x, eps=1e-4):
     x0 = Variable(x.data - eps)
@@ -34,5 +34,23 @@ class SquareTest(unittest.TestCase):
         num_grad = numerical_diff(square, x)
         flg = np.allclose(x.grad, num_grad)
         self.assertTrue(flg)
+
+    def test_taylor(self):
+        def my_sin(x, threshold=0.00001):
+            y = 0
+            for i in range(100000):
+                c = (-1) ** i / math.factorial(2 * i + 1)
+                t = c * x ** (2 * i + 1)
+                y = y + t
+                if abs(t.data) < threshold:
+                    break
+            return y
+        
+        x = Variable(np.array(np.pi / 4))
+        y = my_sin(x)
+        y.backward()
+        flg = np.allclose(y.data, x.grad)
+        self.assertTrue(flg)
+
 
 #unittest.main()
