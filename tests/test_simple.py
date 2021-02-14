@@ -2,7 +2,7 @@ import unittest
 
 import numpy as np
 from dezero import Variable
-from dezero.core import mul, add, square, exp, neg, sin
+from dezero.functions import square, exp, sin
 import math
 
 def numerical_diff(f, x, eps=1e-4):
