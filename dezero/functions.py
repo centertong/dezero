@@ -213,6 +213,66 @@ class Sigmoid(Function):
         gx = gy * y * (1 - y)
         return gx
 
-
 def sigmoid(x):
     return Sigmoid()(x)
+
+
+class GetItem(Function):
+    def __init__(self, slices):
+        self.slices = slices
+    
+    def forward(self, x):
+        y = x[self.slices]
+        return y
+
+    def backward(self, gy):
+        x, = self.inputs
+        f = GetItemGrad(self.slices, x.shape)
+        return f(gy)
+
+def get_item(x, slices):
+    return GetItem(slices)(x)
+
+class GetItemGrad(Function):
+    def __init__(self, slices, in_shape):
+        self.slices = slices
+        self.in_shape = in_shape
+
+    def forward(self, gy):
+        gx = np.zeros(self.in_shape)
+        np.add.at(gx, self.slices, gy)
+        return gx
+
+    def backward(self, ggx):
+        return get_item(ggx, self.slices)
+    
+
+class Softmax(Function):
+    def __init__(self, axis=-1):
+        self.axis = axis
+    
+    def forward(self, x):
+        y = np.exp(x)
+        y /= y.sum(axis=self.axis, keepdims=True)
+        return y
+
+    def backward(self, gy):
+        y = self.outputs[0]()
+        gx = y * gy
+        sumdx = gx.sum(axis=self.axis, keepdims=True)
+        gx -= y * sumdx
+        return gx
+
+def softmax(x, axis=-1):
+    return Softmax(axis)(x)
+
+
+class SoftmaxCrossEntropy(Function):
+    def forward(self, x, t):
+        pass
+
+    def backward(self, gy):
+        pass
+
+def softmax_cross_entory(x, t):
+    return SoftmaxCrossEntropy()(x, t)
