@@ -70,7 +70,7 @@ class Optimization(unittest.TestCase):
         x1 = Variable(np.array(2.0))
     
         lr = 0.001
-        iters = 50000
+        iters = 30000
         for i in range(iters):
             y = rosenbrock(x0, x1)
             

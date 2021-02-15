@@ -85,4 +85,3 @@ class SecondOrder(unittest.TestCase):
         x.cleargrad()
         z = z_(gx, y)
         z.backward()
-        print(x.grad)
