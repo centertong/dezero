@@ -1,5 +1,6 @@
 import os
 import subprocess
+import numpy as np
 
 def plot_dot_graph(output, verbose=True, to_file='graph.png'):
     dot_graph = get_dot_graph(output, verbose)
