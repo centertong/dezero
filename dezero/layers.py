@@ -55,8 +55,9 @@ class Linear(Layer):
         self.W.data = W_data
 
     def forward(self, x):
-        self.in_size = x.shape[-1]
-        self._init_W()
+        if self.W.data is None:
+            self.in_size = x.shape[-1]
+            self._init_W()
 
         y = F.linear(x, self.W, self.b)
         return y

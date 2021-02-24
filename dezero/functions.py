@@ -260,6 +260,11 @@ class GetItemGrad(Function):
     def backward(self, ggx):
         return get_item(ggx, self.slices)
     
+def softmax_simple(x, axis=-1):
+    x = as_variable(x)
+    y = exp(x)
+    sum_y = sum(y, axis=axis, keepdims=True)
+    return y / sum_y
 
 class Softmax(Function):
     def __init__(self, axis=-1):
@@ -283,6 +288,7 @@ def softmax(x, axis=-1):
 def softmax_cross_entropy_simple(x, t):
     x, t = as_variable(x), as_variable(t)
     N = x.shape[0]
+    
     p = softmax(x)
     p = clip(p, 1e-15, 1.0)  # To avoid log(0)
     log_p = log(p)
