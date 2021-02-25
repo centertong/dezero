@@ -71,6 +71,10 @@ class SoftmaxTest(unittest.TestCase):
         model = MLP((hidden_size, hidden_size, 10), activation=F.relu)
         optimizer = optimizers.SGD().setup(model)
 
+        if dezero.cuda.gpu_enable:
+            train_loader.to_gpu()
+            model.to_gpu()
+
         for epoch in range(max_epoch):
             sum_loss, sum_acc = 0, 0
             for x, t in train_loader:
