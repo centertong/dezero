@@ -3,6 +3,13 @@ from dezero.core import as_variable, as_array
 import dezero
 import numpy as np
 
+#########################################################
+from dezero.functions_conv import conv2d_simple
+from dezero.functions_conv import im2col
+from dezero.functions_conv import col2im
+#########################################################
+
+
 class Tanh(Function):
     def forward(self, x):
         xp = cuda.get_array_module(x)

@@ -2,6 +2,7 @@ import os
 import subprocess
 import numpy as np
 import urllib.request
+from dezero import cuda
 
 def plot_dot_graph(output, verbose=True, to_file='graph.png'):
     dot_graph = get_dot_graph(output, verbose)
@@ -123,11 +124,12 @@ def reshape_sum_backward(gy, x_shape, axis, keepdims):
 
 
 def logsumexp(x, axis=1):
+    xp = cuda.get_array_module(x)
     m = x.max(axis=axis, keepdims=True)
     y = x - m
-    y = np.exp(y, out=y)
+    y = xp.exp(y, out=y)
     s = y.sum(axis=axis, keepdims=True)
-    s = np.log(s, out=s)
+    s = xp.log(s, out=s)
     m += s
     return m
 
@@ -151,6 +153,15 @@ def pair(x):
         return x
     else:
         raise ValueError
+
+def get_deconv_outsize(size, k, s, p):
+    return s * (size - 1) + k - 2 * p
+
+
+def get_conv_outsize(input_size, kernel_size, stride, pad):
+    return (input_size + pad * 2 - kernel_size) // stride + 1
+
+
 
 cache_dir = os.path.join(os.path.expanduser('~'), '.dezero')
 
