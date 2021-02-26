@@ -1,6 +1,6 @@
 import numpy as np
 import dezero.functions as F
-from dezero.utils import get_conv_outsize, get_deconv_outsize
+from dezero.utils import get_conv_outsize, get_deconv_outsize, pair
 from dezero import cuda, Function
 from dezero.core import as_variable
 
@@ -22,6 +22,23 @@ def conv2d_simple(x, W, b=None, stride=1, pad=0):
     t = F.linear(col, Weight, b)
     y = t.reshape(N, OH, OW, OC).transpose(0,3,1,2)
     return y
+
+def pooling_simple(x, kernel_size, stride=1, pad=0):
+    x = as_variable(x)
+
+    N, C, H, W = x.shape
+    KH, KW = pair(kernel_size)
+    PH, PW = pair(pad)
+    SH, SW = pair(stride)
+    OH = get_conv_outsize(H, KH, SH, PH)
+    OW = get_conv_outsize(W, KW, SW, PW)
+
+    col = im2col(x, kernel_size, stride, pad, to_matrix=True)
+    col = col.reshape(-1, KH * KW)
+    y = col.max(axis=1)
+    y = y.reshape(N, OH, OW, C).transpose(0, 3, 1, 2)
+    return y
+
 
 # =============================================================================
 #  conv2d / deconv2d
