@@ -220,3 +220,49 @@ class CIFAR100(CIFAR10):
         coarse_labels = dict(enumerate(['aquatic mammals','fish','flowers','food containers','fruit and vegetables','household electrical device','household furniture','insects','large carnivores','large man-made outdoor things','large natural outdoor scenes','large omnivores and herbivores','medium-sized mammals','non-insect invertebrates','people','reptiles','small mammals','trees','vehicles 1','vehicles 2']))
         fine_labels = []
         return fine_labels if label_type == 'fine' else coarse_labels
+
+# =============================================================================
+# Sequential datasets: SinCurve, Shapekspare
+# =============================================================================
+class SinCurve(Dataset):
+
+    def prepare(self):
+        num_data = 1000
+        dtype = np.float64
+
+        x = np.linspace(0, 2 * np.pi, num_data)
+        noise_range = (-0.05, 0.05)
+        noise = np.random.uniform(noise_range[0], noise_range[1], size=x.shape)
+        if self.train:
+            y = np.sin(x) + noise
+        else:
+            y = np.cos(x)
+        y = y.astype(dtype)
+        self.data = y[:-1][:, np.newaxis]
+        self.label = y[1:][:, np.newaxis]
+
+
+class Shakespear(Dataset):
+
+    def prepare(self):
+        url = 'https://raw.githubusercontent.com/karpathy/char-rnn/master/data/tinyshakespeare/input.txt'
+        file_name = 'shakespear.txt'
+        path = get_file(url, file_name)
+        with open(path, 'r') as f:
+            data = f.read()
+        chars = list(data)
+
+        char_to_id = {}
+        id_to_char = {}
+        for word in data:
+            if word not in char_to_id:
+                new_id = len(char_to_id)
+                char_to_id[word] = new_id
+                id_to_char[new_id] = word
+
+        indices = np.array([char_to_id[c] for c in chars])
+        self.data = indices[:-1]
+        self.label = indices[1:]
+        self.char_to_id = char_to_id
+        self.id_to_char = id_to_char
+
